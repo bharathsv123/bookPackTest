@@ -1,0 +1,271 @@
+package com.infy.service.test;
+
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.infy.dto.BookingDTO;
+import com.infy.entity.Booking;
+import com.infy.entity.Destination;
+import com.infy.entity.User;
+import com.infy.exception.WanderLustException;
+import com.infy.repository.BookingRepository;
+import com.infy.repository.PackageRepository;
+import com.infy.repository.UserRepository;
+import com.infy.service.BookingServiceImpl;
+
+
+@SpringBootTest
+public class BookingServiceTest {
+
+	@Mock
+	PackageRepository packageRepository;
+	
+	@Mock
+	BookingRepository bookingRepository;
+	@Mock
+	UserRepository userRepository;
+
+	@InjectMocks
+	BookingServiceImpl bookingService;
+	
+	
+	@Test
+	public void validaddBook() throws Exception
+	{
+		
+		
+		
+		Integer userId=101;
+		String destinationId="D1001";
+		
+		
+		
+		User user = new User();
+		user.setUserId(101);
+		
+		Destination dt=new Destination();
+		dt.setDestinationId("D1001");
+		dt.setAvailability(30);
+		dt.setChargePerPerson(2499.0f);
+		dt.setNoOfNights(7);
+		BookingDTO book=new BookingDTO();
+		book.setNoOfPeople(2);
+		LocalDateTime checkin=LocalDateTime.now();
+		book.setTimeOfBooking(checkin);
+		book.setCheckIn(LocalDate.of(2021, 11, 18));
+		
+		book.setBookingId(1015);
+
+		
+		Mockito.when(userRepository.findByUserId(101)).thenReturn(user);
+		Mockito.when(packageRepository.findByDestinationId(destinationId)).thenReturn(dt);
+		Integer actual= bookingService.addBooking(book, 101, "D1001");
+		 Assert.assertEquals(null, actual);
+		
+		
+	}
+	
+	
+	@Test
+	public void invalidUserInvalidaddBook() throws Exception
+	{
+		
+		
+		
+		Integer userId=101;
+		String destinationId="D1001";
+		
+		
+		
+
+		
+		Destination dt=new Destination();
+		dt.setDestinationId("D1001");
+		dt.setAvailability(30);
+		dt.setChargePerPerson(2499.0f);
+		dt.setNoOfNights(7);
+		BookingDTO book=new BookingDTO();
+		book.setNoOfPeople(2);
+		LocalDateTime checkin=LocalDateTime.now();
+		book.setTimeOfBooking(checkin);
+		book.setCheckIn(LocalDate.of(2021, 11, 18));
+		
+		book.setBookingId(1015);
+
+		
+		Mockito.when(userRepository.findByUserId(Mockito.anyInt())).thenReturn(null);
+		Mockito.when(packageRepository.findByDestinationId(destinationId)).thenReturn(dt);
+
+		WanderLustException exception = Assertions.assertThrows(WanderLustException.class,
+				() -> bookingService.addBooking(book, 101, "D1001"));
+		Assertions.assertEquals("BookingService.USER_INVALID", exception.getMessage());
+		
+		
+	}
+	
+	@Test
+	public void invalidBookingInvalidaddBook() throws Exception
+	{
+		
+		
+		
+		Integer userId=101;
+		String destinationId="D1001";
+		
+		
+		User user = new User();
+		user.setUserId(101);
+
+		
+		Destination dt=new Destination();
+		dt.setDestinationId("D1001");
+		dt.setAvailability(30);
+		dt.setChargePerPerson(2499.0f);
+		dt.setNoOfNights(7);
+		
+		BookingDTO book=new BookingDTO();
+		book.setNoOfPeople(2);
+		LocalDateTime checkin=LocalDateTime.now();
+		book.setTimeOfBooking(checkin);
+		book.setCheckIn(LocalDate.of(2021, 11, 18));
+		
+		book.setBookingId(1015);
+
+
+
+		
+		Mockito.when(userRepository.findByUserId(101)).thenReturn(user);
+		Mockito.when(packageRepository.findByDestinationId(destinationId)).thenReturn(null);
+
+		WanderLustException exception = Assertions.assertThrows(WanderLustException.class,
+				() -> bookingService.addBooking(book, 101, "D1001"));
+		Assertions.assertEquals("BookingService.DESTINATION_INVALID", exception.getMessage());
+		
+		
+	}
+	
+	@Test
+	public void invalidBookingAvailabilityInvalidaddBook() throws Exception
+	{
+		
+		
+		
+		Integer userId=101;
+		String destinationId="D1001";
+		
+		
+		User user = new User();
+		user.setUserId(101);
+
+		
+		Destination dt=new Destination();
+		dt.setDestinationId("D1001");
+		dt.setAvailability(1);
+		dt.setChargePerPerson(2499.0f);
+		dt.setNoOfNights(7);
+		
+		BookingDTO book=new BookingDTO();
+		book.setNoOfPeople(2);
+		LocalDateTime checkin=LocalDateTime.now();
+		book.setTimeOfBooking(checkin);
+		book.setCheckIn(LocalDate.of(2021, 11, 18));
+		
+		book.setBookingId(1015);
+
+
+
+		
+		Mockito.when(userRepository.findByUserId(101)).thenReturn(user);
+		Mockito.when(packageRepository.findByDestinationId(destinationId)).thenReturn(dt);
+
+		WanderLustException exception = Assertions.assertThrows(WanderLustException.class,
+				() -> bookingService.addBooking(book, 101, "D1001"));
+		Assertions.assertEquals("BookingService.NOT_AVAILABLE", exception.getMessage());
+		
+		
+	}
+	
+	
+	@Test
+	public void invalidDestinationInvalidaddBook() throws Exception
+	{
+		
+		
+		
+		Integer userId=101;
+		String destinationId="D1001";
+		
+		
+		User user = new User();
+		user.setUserId(101);
+
+		
+		Destination dt=new Destination();
+		dt.setDestinationId("D1001");
+		dt.setAvailability(30);
+		dt.setChargePerPerson(2499.0f);
+		dt.setNoOfNights(7);
+		
+
+
+		
+		Mockito.when(userRepository.findByUserId(101)).thenReturn(user);
+		Mockito.when(packageRepository.findByDestinationId(destinationId)).thenReturn(null);
+
+		WanderLustException exception = Assertions.assertThrows(WanderLustException.class,
+				() -> bookingService.addBooking(null, 101, "D1001"));
+		Assertions.assertEquals("BookingService.INVALID_BOOK", exception.getMessage());
+		
+		
+	}
+	@Test
+	public void validgetBookingRecords() throws Exception
+	{
+		List<Booking> blist=new ArrayList();
+		
+		Booking book=new Booking();
+		User u=new User();
+		Destination dt=new Destination();
+		book.setUser(u);
+		book.setDestination(dt);
+		book.setBookingId(1001);
+		blist.add(book);
+		
+		Integer userId=101;
+		Mockito.when(bookingRepository.findByUserUserId(userId)).thenReturn(blist);
+		List<BookingDTO> actual = bookingService.getBookingRecords(101);
+		Assert.assertEquals(blist.get(0).getBookingId(), actual.get(0).getBookingId());
+	}
+	
+	@Test
+	public void invalidgetBookingRecords() throws Exception
+	{
+		
+		
+
+		List<Booking> blist=new ArrayList();
+
+	
+		
+		Integer userId=101;
+		Mockito.when(bookingRepository.findByUserUserId(Mockito.anyInt())).thenReturn(blist);
+
+		WanderLustException exception = Assertions.assertThrows(WanderLustException.class,
+				() -> bookingService.getBookingRecords(101));
+		Assertions.assertEquals("BookingService.NO_BOOKING", exception.getMessage());
+		
+	}
+	
+	
+}
